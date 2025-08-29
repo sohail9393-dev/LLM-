@@ -48,7 +48,7 @@ print(preprocessed[:30])  # Print first 30 tokens
 print(len(preprocessed))  # Print total number of tokens
 all_words = sorted(set(preprocessed))  # Get sorted unique tokens
 vocab_size = len(all_words)  # Get vocabulary size
-# COMPLETED TILL HERE
+
 print(vocab_size)  # Print vocabulary size
 vocab = {token:integer for integer,token in enumerate(all_words)}  # Map tokens to integers
 for i, item in enumerate(vocab.items()):  # Iterate over vocab items
