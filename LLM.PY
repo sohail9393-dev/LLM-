@@ -110,3 +110,51 @@ class SimpleTokenizerV2:
         # Replace spaces before the specified punctuations
         text = re.sub(r'\s+([,.:;?!"()\'])', r'\1', text)  # Clean up spaces
         return text  # Return decoded text
+    
+tokenizer = SimpleTokenizerV2(vocab)
+# Initialize a simple tokenizer (your custom version) with a given vocabulary.
+
+text1 = "Hello, do you like tea?"# First input text string.
+text2 = "In the sunlit terraces of the palace."# Second input text string.
+
+text = " <|endoftext|> ".join((text1, text2))
+# Concatenate both texts with a special separator token <|endoftext|>.  
+# This token is commonly used by GPT models to mark text boundaries.
+print(text)# Print the combined text so you can see how it looks after joining.
+tokenizer.encode(text)# Convert the text into a list of token IDs (integers) using your custom tokenizer.
+tokenizer.decode(tokenizer.encode(text))
+# Convert the token IDs back into text, verifying that encoding and decoding work properly.
+
+
+
+# BYTE PAIR ENCODER
+
+import importlib.metadata  # Import metadata module
+import tiktoken  # Import tiktoken library
+print("tiktoken version:", importlib.metadata.version("tiktoken"))
+# Print the currently installed version of the tiktoken library.
+tokenizer = tiktoken.get_encoding("gpt2")
+# Load the GPT-2 tokenizer (uses Byte Pair Encoding).  
+# This tokenizer knows how to split text into GPT-2 tokens.
+text = (
+    "Hello, do you like tea? <|endoftext|> In the sunlit terraces"
+     "of someunknownPlace."
+)
+# Define an input text string that includes a special token <|endoftext|>  
+# and a made-up word "someunknownPlace" to test how the tokenizer handles it.
+
+
+integers = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+# Encode the text into token IDs (integers).  
+# The 'allowed_special' argument ensures <|endoftext|> is kept as a special token.
+
+
+print(integers)
+# Print the tokenized output (a list of integers).  
+# Each integer corresponds to a subword token from the GPT-2 vocabulary.
+
+
+strings = tokenizer.decode(integers)
+# Decode the list of token IDs back into a human-readable text string.
+print(strings)
+# Print the reconstructed text after decoding.  
