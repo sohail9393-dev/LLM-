@@ -158,3 +158,53 @@ strings = tokenizer.decode(integers)
 # Decode the list of token IDs back into a human-readable text string.
 print(strings)
 # Print the reconstructed text after decoding.  
+
+import tiktoken
+
+# Initialize the encodings for GPT-2, GPT-3, and GPT-4
+encodings = {
+    "gpt2": tiktoken.get_encoding("gpt2"),
+    "gpt3": tiktoken.get_encoding("p50k_base"),  # Commonly associated with GPT-3 models
+    "gpt4": tiktoken.get_encoding("cl100k_base")  # Used for GPT-4 and later versions
+}
+
+# Get the vocabulary size for each encoding
+vocab_sizes = {model: encoding.n_vocab for model, encoding in encodings.items()}
+
+# Print the vocabulary sizes
+for model, size in vocab_sizes.items():
+    print(f"The vocabulary size for {model.upper()} is: {size}")
+
+
+# CREATING INPUT TARGET PAIRS
+
+with open("the-verdict.txt", "r", encoding="utf-8") as f:
+    raw_text = f.read()
+
+enc_text = tokenizer.encode(raw_text)
+print(len(enc_text))
+
+enc_sample = enc_text[50:]
+
+context_size = 4 #length of the input
+#The context_size of 4 means that the model is trained to look at a sequence of 4 words (or tokens) 
+#to predict the next word in the sequence. 
+#The input x is the first 4 tokens [1, 2, 3, 4], and the target y is the next 4 tokens [2, 3, 4, 5]
+
+x = enc_sample[:context_size]# Take the first 4 tokens as input sequence (x)
+y = enc_sample[1:context_size+1]# Take the next 4 tokens (shifted by one position) as target sequence (y)
+
+print(f"x: {x}")# Print the input sequence (x)
+print(f"y:      {y}")# Print the target sequence (y) aligned for clarity
+
+for i in range(1, context_size+1):# Loop through 1 to context_size (inclusive)
+    context = enc_sample[:i]# Get a growing context (from the first token up to i)
+    desired = enc_sample[i]# The desired next token is the one immediately after the context
+
+    print(context, "---->", desired)
+
+for i in range(1, context_size+1):# Repeat the loop, but this time decode tokens back to text
+    context = enc_sample[:i]# Get the same context sequence
+    desired = enc_sample[i]# Get the same desired next token
+
+    print(tokenizer.decode(context), "---->", tokenizer.decode([desired])) # Print the decoded text of context and the decoded desired token
