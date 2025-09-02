@@ -278,3 +278,49 @@ data_iter = iter(dataloader)  # Get iterator
 inputs, targets = next(data_iter)  # Get inputs and targets
 print("Inputs:\n", inputs)  # Print inputs
 print("\nTargets:\n", targets)  # Print targets
+
+# IN THIS LEC. WE ARE GOING TO CREATE TOKEN EMBEDDINGS
+input_ids = torch.tensor([2, 3, 5, 1])  # Example token ids
+
+vocab_size = 6  # Set vocabulary size
+output_dim = 3  # Set output dimension
+
+torch.manual_seed(123)  # Set random seed
+embedding_layer = torch.nn.Embedding(vocab_size, output_dim)  # Create embedding layer
+
+print(embedding_layer.weight)  # Print embedding weights
+
+print(embedding_layer(torch.tensor([3])))  # Print embedding for token 3
+
+print(embedding_layer(input_ids))  # Print embeddings for input ids
+
+# LECTURE NUMBER 11 STARTS FROM HERE
+# IN THIS LEC. WE ARE GOING TO CREATE POSITIONAL VECTOR EMBEDDINGS
+
+vocab_size = 50257  # Set vocabulary size
+output_dim = 256  # Set output dimension
+token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)  # Create token embedding layer
+
+max_length = 4  # Set max sequence length
+dataloader = create_dataloader_v1(
+    raw_text, batch_size=8, max_length=max_length,
+    stride=max_length, shuffle=False 
+)  # Create dataloader
+data_iter = iter(dataloader)  # Get iterator
+inputs, targets = next(data_iter)  # Get inputs and targets
+
+print("Token IDs:\n", inputs)  # Print token ids
+print("\nInputs shape:\n", inputs.shape)  # Print input shape
+
+token_embeddings = token_embedding_layer(inputs)  # Get token embeddings
+print(token_embeddings.shape)  # Print shape of token embeddings
+
+context_length = max_length  # Set context length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)  # Create positional embedding layer
+
+
+pos_embeddings = pos_embedding_layer(torch.arange(max_length))  # Get positional embeddings
+print(pos_embeddings.shape)  # Print shape of positional embeddings
+
+input_embeddings = token_embeddings + pos_embeddings  # Add token and positional embeddings
+print(input_embeddings.shape)  # Print shape of input embeddings
