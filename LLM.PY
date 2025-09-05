@@ -324,3 +324,57 @@ print(pos_embeddings.shape)  # Print shape of positional embeddings
 
 input_embeddings = token_embeddings + pos_embeddings  # Add token and positional embeddings
 print(input_embeddings.shape)  # Print shape of input embeddings
+
+import torch  # Import torch
+
+inputs = torch.tensor(
+  [[0.43, 0.15, 0.89], # Your     (x^1)
+   [0.55, 0.87, 0.66], # journey  (x^2)
+   [0.57, 0.85, 0.64], # starts   (x^3)
+   [0.22, 0.58, 0.33], # with     (x^4)
+   [0.77, 0.25, 0.10], # one      (x^5)
+   [0.05, 0.80, 0.55]] # step     (x^6)
+)  # Example input embeddings
+
+import matplotlib.pyplot as plt  # Import matplotlib
+from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
+
+# Corresponding words
+words = ['Your', 'journey', 'starts', 'with', 'one', 'step']  # List of words
+
+# Extract x, y, z coordinates
+x_coords = inputs[:, 0].numpy()  # Get x coordinates
+y_coords = inputs[:, 1].numpy()  # Get y coordinates
+z_coords = inputs[:, 2].numpy()  # Get z coordinates
+
+# Create 3D plot
+fig = plt.figure()  # Create figure
+ax = fig.add_subplot(111, projection='3d')  # Add 3D subplot
+
+# Plot each point and annotate with corresponding word
+for x, y, z, word in zip(x_coords, y_coords, z_coords, words):  # Loop over points
+    ax.scatter(x, y, z)  # Plot point
+    ax.text(x, y, z, word, fontsize=10)  # Annotate point
+
+# Set labels for axes
+ax.set_xlabel('X')  # Set x label
+ax.set_ylabel('Y')  # Set y label
+ax.set_zlabel('Z')  # Set z label
+
+plt.title('3D Plot of Word Embeddings')  # Set plot title
+plt.show()  # Show plot
+
+attn_scores = torch.empty(6, 6)  # Create empty attention scores tensor
+
+for i, x_i in enumerate(inputs):  # Loop over inputs
+    for j, x_j in enumerate(inputs):  # Loop over inputs
+        attn_scores[i, j] = torch.dot(x_i, x_j)  # Compute dot product
+
+print(attn_scores)  # Print attention scores
+
+attn_weights = torch.softmax(attn_scores, dim=-1)  # Compute softmax weights
+print(attn_weights)  # Print attention weights
+
+row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240, 0.1082, 0.1581])  # Sum of row 2
+print("Row 2 sum:", row_2_sum)  # Print row 2 sum
+print("All row sums:", attn_weights.sum(dim=-1))  # Print all row sums
