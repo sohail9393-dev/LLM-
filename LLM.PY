@@ -378,3 +378,63 @@ print(attn_weights)  # Print attention weights
 row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240, 0.1082, 0.1581])  # Sum of row 2
 print("Row 2 sum:", row_2_sum)  # Print row 2 sum
 print("All row sums:", attn_weights.sum(dim=-1))  # Print all row sums
+
+
+all_context_vecs = attn_weights @ inputs  # Compute context vectors
+print(all_context_vecs)  # Print context vectors
+
+context_vec_2 = all_context_vecs[1]  # Get context vector for second input
+print("Previous 2nd context vector:", context_vec_2)  # Print context vector
+
+import torch  # Import torch
+
+inputs = torch.tensor(
+  [[0.43, 0.15, 0.89], # Your     (x^1)
+   [0.55, 0.87, 0.66], # journey  (x^2)
+   [0.57, 0.85, 0.64], # starts   (x^3)
+   [0.22, 0.58, 0.33], # with     (x^4)
+   [0.77, 0.25, 0.10], # one      (x^5)
+   [0.05, 0.80, 0.55]] # step     (x^6)
+)  # Example input embeddings
+
+x_2 = inputs[1] #A  # Get second input
+d_in = inputs.shape[1] #B  # Get input dimension
+d_out = 2 #C  # Set output dimension
+
+torch.manual_seed(123)  # Set random seed
+W_query = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)  # Create query weights
+W_key = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)  # Create key weights
+W_value = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)  # Create value weights
+print(W_query)  # Print query weights
+
+print(W_key)  # Print key weights
+print(W_value)  # Print value weights
+
+query_2 = x_2 @ W_query  # Compute query for second input
+key_2 = x_2 @ W_key  # Compute key for second input
+value_2 = x_2 @ W_value  # Compute value for second input
+print(query_2)  # Print query
+
+keys = inputs @ W_key  # Compute keys for all inputs
+values = inputs @ W_value  # Compute values for all inputs
+queries = inputs @ W_query  # Compute queries for all inputs
+print("keys.shape:", keys.shape)  # Print shape of keys
+
+print("values.shape:", values.shape)  # Print shape of values
+
+print("queries.shape:", queries.shape)  # Print shape of queries
+
+keys_2 = keys[1] #A  # Get key for second input
+attn_score_22 = query_2.dot(keys_2)  # Compute attention score for second input
+print(attn_score_22)  # Print attention score
+
+attn_scores_2 = query_2 @ keys.T # All attention scores for given query  # Compute attention scores for second input
+print(attn_scores_2)  # Print attention scores
+
+attn_scores = queries @ keys.T # omega  # Compute attention scores for all inputs
+print(attn_scores)  # Print attention scores
+
+d_k = keys.shape[-1]  # Get key dimension
+attn_weights_2 = torch.softmax(attn_scores_2 / d_k**0.5, dim=-1)  # Compute softmax weights for second input
+print(attn_weights_2)  # Print attention weights
+print(d_k)  # Print key dimension
